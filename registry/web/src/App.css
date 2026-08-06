@@ -1,0 +1,151 @@
+:root {
+  --bg: #fcfcfc;
+  --text: #111111;
+  --text-muted: #555555;
+  --border: #e2e2e2;
+  --accent: #000000;
+  --card-bg: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  margin-bottom: 3rem;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2rem;
+}
+
+.branding h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.branding .subtitle {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+}
+
+.controls {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.search-input, .filter-select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card-bg);
+}
+
+.search-input {
+  flex: 1;
+}
+
+.metrics {
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.card-header h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.card-header h2 a:hover {
+  text-decoration: underline;
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge.category {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.badge.maturity {
+  background: #eef2ff;
+  color: #2563eb;
+}
+
+.description {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.analysis-section {
+  margin-bottom: 1.25rem;
+}
+
+.analysis-section h3 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0 0 0.25rem 0;
+}
+
+.analysis-section p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.analysis-section.highlight {
+  padding-left: 1rem;
+  border-left: 3px solid var(--accent);
+}
