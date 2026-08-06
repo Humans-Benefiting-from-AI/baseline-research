@@ -39,7 +39,7 @@ function App() {
     <div className="container">
       <header className="header">
         <div className="branding">
-          <h1>Intelligere</h1>
+          <h1>Baseline Research</h1>
           <p className="subtitle">The independent registry and audit of 110 Jewish AI tools.</p>
         </div>
         <div className="controls">
