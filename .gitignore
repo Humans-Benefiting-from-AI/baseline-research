@@ -2,3 +2,5 @@ node_modules/
 dist/
 .env
 .DS_Store
+benchmark/batch_input*.jsonl
+benchmark/scholar_*/

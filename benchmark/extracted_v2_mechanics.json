@@ -1,0 +1,23 @@
+[
+  {
+    "mechanic_name": "Peah has no fixed measure",
+    "scenario": "A farmer is harvesting his field and wonders how much of the corner he must leave for the poor as Peah. He considers leaving a small portion, thinking it might be sufficient.",
+    "trap": "A simplistic AI might guess that there is a specific percentage or amount that must be left as Peah, such as one-tenth of the field.",
+    "ground_truth": "There is no fixed measure for Peah; the amount is determined by the farmer's discretion, taking into account the size of the field, the number of poor, and the farmer's generosity.",
+    "explanation": "The Mishnah in Peah states that Peah has no fixed measure, meaning the Torah does not prescribe a specific amount. Instead, it is left to the farmer's judgment, allowing flexibility based on circumstances and encouraging generosity."
+  },
+  {
+    "mechanic_name": "One-sixtieth as a guideline for Peah",
+    "scenario": "A farmer is unsure how much Peah to leave and hears that one-sixtieth is a common practice. He wonders if this is a binding rule.",
+    "trap": "A simplistic AI might assume that one-sixtieth is a strict requirement for Peah.",
+    "ground_truth": "One-sixtieth is a guideline, not a binding rule. The actual amount can vary based on the farmer's discretion and the needs of the poor.",
+    "explanation": "Rabbi Yochanan discusses whether the measure of one-sixtieth is a Torah law or a rabbinic guideline. The consensus is that it serves as a customary guideline rather than a strict legal requirement, allowing for flexibility."
+  },
+  {
+    "mechanic_name": "Peah can be designated from the middle of the field",
+    "scenario": "A farmer decides to leave Peah from the middle of his field instead of the corner, wondering if this is permissible.",
+    "trap": "A simplistic AI might assume Peah must always be left from the corner of the field.",
+    "ground_truth": "Peah can be designated from any part of the field, including the middle, as long as it is left for the poor.",
+    "explanation": "The Mishnah allows for Peah to be set aside from any part of the field, not just the corner. This flexibility accommodates different field layouts and farming practices, emphasizing the importance of the act of giving rather than the specific location."
+  }
+]
