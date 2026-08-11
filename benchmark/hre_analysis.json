@@ -1,0 +1,34 @@
+{
+  "total_evaluations": 100,
+  "valid_evaluations": 100,
+  "error_rate": 0.0,
+  "gpt-4o": {
+    "overall_accuracy": 83.0,
+    "correct": 83,
+    "total": 100
+  },
+  "archetypes": {
+    "Hallucinated References": 25,
+    "Temporal Source-Gating": 25,
+    "Multi-Step Dependency (Kavu'a)": 25,
+    "Hierarchical Override (Kim Li)": 25
+  },
+  "accuracy_by_archetype": {
+    "Hallucinated References": {
+      "count": 25,
+      "accuracy": 100.0
+    },
+    "Temporal Source-Gating": {
+      "count": 25,
+      "accuracy": 100.0
+    },
+    "Multi-Step Dependency (Kavu'a)": {
+      "count": 25,
+      "accuracy": 32.0
+    },
+    "Hierarchical Override (Kim Li)": {
+      "count": 25,
+      "accuracy": 100.0
+    }
+  }
+}
