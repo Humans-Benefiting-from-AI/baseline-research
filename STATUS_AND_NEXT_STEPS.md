@@ -104,31 +104,29 @@ GPT-4o Accuracy: 83%
 
 These tasks **require your judgment, voice, and expertise.** I've built the infrastructure; you drive the content and decisions.
 
-### 🔴 BLOCKING TASKS (Must Do First)
+### ✅ PHASE 1 COMPLETE: Registry Launch
 
-**[ELIE ONLY] Task #8: Pick final brand name and buy domain**
-- Choosing from: Baseline, Corpus, Cleartext, or your alternative
-- Domain purchase (~$12/year)
-- **Impact:** Blocks Registry deployment, social launch, all downstream branding
-- **Effort:** 30 minutes
-- **Timeline:** Urgent (today ideally)
-
-Once domain is selected:
-1. Update branding in `registry/web/src/App.tsx` (line 42: currently "Baseline Research")
-2. Run DEPLOYMENT.md steps
-3. Point domain DNS to Vercel
+**✅ Task #8: Pick final brand name and buy domain [COMPLETE]**
+- ✅ Domain selected: **baseline-research.io**
+- ✅ Domain purchased (August 11, 2026)
+- ✅ Registry deployed to Vercel
+- ✅ DNS configured and live
+- **Timeline:** Completed August 12, 2026
+- **Status:** Live at https://baseline-research.io (110 tools loaded, fully functional)
 
 ---
 
 ### 📝 HIGH-PRIORITY AUTHORSHIP TASKS
 
-**[ELIE ONLY] Task #9: Write launch manifesto (500 words)**
-- The "Independence Constraint" thesis from ROADMAP.md
-- Explain why Orthodox communities need independent AI research
-- Use your canonical writing voice (per Canonical Voice Specification)
-- **Impact:** Required for Registry launch day
-- **Timeline:** 2-3 hours
-- **Deliverable:** File to publish alongside Registry
+**🔴 Task #9: Write launch manifesto (500 words) [READY FOR YOUR AUTHORSHIP]**
+- ✅ Template created: `LAUNCH_MANIFESTO_TEMPLATE.md` (structure + guidance ready)
+- Explain the "Independence Constraint" thesis from `ai-judaism-platform_independence-constraint_v1.md`
+- Why Orthodox communities need independent AI research (not vendor claims, not institutional politics)
+- Use your canonical writing voice
+- **Impact:** Publishes day-1 alongside Registry on all social channels
+- **Timeline:** 2-3 hours to author the 500-word piece
+- **Deliverable:** `LAUNCH_MANIFESTO.md` ready to publish
+- **Next step:** Publish Registry + Manifesto on social (Task #14)
 
 ---
 
@@ -217,11 +215,11 @@ Once domain is selected:
 
 ## The Path Forward: Your Sequence
 
-### Week 1 (Immediate)
-1. ✅ Pick domain name and buy it
-2. ✅ Deploy Registry to Vercel (follow DEPLOYMENT.md)
-3. ✅ Write launch manifesto (500 words)
-4. ✅ Publish Registry + manifesto on social
+### Week 1 (Immediate) — HALF COMPLETE
+1. ✅ Pick domain name and buy it → **baseline-research.io purchased & live**
+2. ✅ Deploy Registry to Vercel → **https://baseline-research.io is live**
+3. 🔄 Write launch manifesto (500 words) → **Template ready, awaiting your authorship**
+4. ⏳ Publish Registry + manifesto on social → **Awaits #3 completion**
 
 ### Week 2-3
 1. Start weekly Substack (publish 1-2 sample analyses)
