@@ -35,8 +35,8 @@ def main():
     transcript_dirs = [
         "/Users/elieschulman/Projects/yutorah-local-pipeline/data/schwartz-ruvi-catalog/transcripts/clean",
         "/Users/elieschulman/Projects/yutorah-local-pipeline/data/schwartz-ruvi-catalog/transcripts/english",
-        "/Users/elieschulman/Projects/AI-plus-Orthodoxy-Platform-Option-Map/benchmark/scholar_2",
-        "/Users/elieschulman/Projects/AI-plus-Orthodoxy-Platform-Option-Map/benchmark/scholar_3"
+        "/Users/elieschulman/Projects/yutorah-local-pipeline/data/twersky-catalog",
+        "/Users/elieschulman/Projects/yutorah-local-pipeline/data/twersky-moshe-catalog"
     ]
     
     output_path = "/Users/elieschulman/Projects/AI-plus-Orthodoxy-Platform-Option-Map/benchmark/batch_input_all_scholars.jsonl"
