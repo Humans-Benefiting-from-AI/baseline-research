@@ -4,3 +4,6 @@ dist/
 .DS_Store
 benchmark/batch_input*.jsonl
 benchmark/scholar_*/
+!benchmark/scholar_*/
+benchmark/scholar_*/**
+!benchmark/scholar_*/README.md
