@@ -11,7 +11,7 @@ interface Project {
   description: string
   core_feature: string
   differentiator: string
-  variation_ideas: string
+  variation_ideas: string[]
 }
 
 const projects: Project[] = registryData as Project[]
@@ -95,7 +95,11 @@ function App() {
                 
                 <div className="analysis-section">
                   <h3>Variation Ideas</h3>
-                  <p>{p.variation_ideas}</p>
+                  <ul className="variation-list">
+                    {p.variation_ideas.map((idea, index) => (
+                      <li key={index}>{idea}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </article>

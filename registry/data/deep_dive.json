@@ -1,0 +1,422 @@
+[
+  {
+    "rank": 1,
+    "project_id": 13,
+    "name": "PshatGPT",
+    "category": "AI",
+    "maturity": "Live product",
+    "link": "https://pshatgpt.com/",
+    "what_it_actually_is": "A Talmud reader where the text itself is the interface. You click a line of gemara, Rashi, or Tosafot and a plain-sense explanation streams in for that exact text in its context. Ten explanations free per day, unlimited if you supply your own API key.",
+    "core_mechanic": "Inference anchored to a coordinate in a corpus, not to a chat thread. The user never composes a question; the click IS the question.",
+    "real_differentiator": "Almost every AI project in this showcase is a chat box with Jewish texts behind it. PshatGPT is the clearest case of the opposite bet: the canonical page stays primary and the model is a hover layer on top of it. The bring-your-own-key model also quietly solves the unit economics that will kill most of the other 20 AI entries.",
+    "strategic_interest": "This is the single most transferable pattern on the whole page. 'Click any unit of a difficult document, get a contextual explanation' generalizes to law, medicine, standards, contracts, scientific papers, and legacy code. The Jewish text case is just the hardest possible test of it, because context windows have to carry a sugya, not a paragraph.",
+    "whats_missing": "No memory. It cannot see that you asked about this same construction four times, cannot escalate depth, and cannot notice you are struggling with a specific grammatical form rather than a specific line. It also throws away the richest signal it generates: which lines people actually click.",
+    "variations": [
+      "A click-to-explain layer as a browser extension that works over ANY Hebrew text site, not only a hosted reader.",
+      "An explanation depth dial: repeated clicks on the same line escalate translation to grammar to sugya structure to lomdus.",
+      "Aggregate click data into a public difficulty heat map of each tractate, which becomes the first empirical map of where learners actually get stuck.",
+      "The same mechanic over a totally different corpus (case law, IRS code, clinical guidelines) sold to professionals who pay real money.",
+      "A teacher-facing mirror: a rabbi sees the live heat map of what their class clicked during a shiur and adjusts on the spot."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 2,
+    "project_id": 70,
+    "name": "Shulkhan",
+    "category": "Apps & Other Tools",
+    "maturity": "Demo/prototype",
+    "link": "http://josephtepperman.com/shulkhan.htm",
+    "what_it_actually_is": "A downward-facing projector and webcam sit above an open printed Talmud. The system recognizes which page is on the table, tracks the reader's finger, and projects the English translation of the pointed-at word onto the paper itself.",
+    "core_mechanic": "The physical book stays the interface. The digital library becomes an overlay on paper rather than a replacement for it.",
+    "real_differentiator": "It is the only project among all 110 that does not ask the learner to move to a screen. Everything else assumes migration to digital. This assumes the opposite and treats the printed sefer as the permanent substrate.",
+    "strategic_interest": "The whole showcase is built on an unexamined premise: that digitization means reading on glass. Shulkhan is the one counterexample, and the constituency it serves (people who will not learn from a screen, for reasons of kavod, minhag, Shabbat, or eyestrain) is large and almost entirely unserved by the other 109. Hardware cost is the only thing keeping it a demo.",
+    "whats_missing": "It needs a projector. A phone camera on a cheap stand plus a screen instead of projection would collapse the cost by 100x and make the whole category viable. Nobody has built that.",
+    "variations": [
+      "Phone-on-a-stand version: point the camera at any printed sefer, tap the phone screen where your finger is, get the translation. No projector.",
+      "A classroom rig where the teacher's finger position on their copy broadcasts to twenty student pages so everyone is literally on the same word.",
+      "Extend the page-recognition step into a standalone library scanner that identifies an unknown printed edition from a single photo of any page.",
+      "A Shabbat-compatible version where the device is set up before Shabbat and runs passively with no user-initiated electronics.",
+      "The same camera-over-paper overlay applied to sheet music, engineering drawings, or foreign-language print books."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 3,
+    "project_id": 19,
+    "name": "TzadekAI",
+    "category": "AI",
+    "maturity": "Live product",
+    "link": "https://tzadek.ai/",
+    "what_it_actually_is": "A halakhic question goes in. The system answers it five times, once per posek from a different historical era, feeding each persona only the sources that existed in its own period, then synthesizes where the five agree and where they split.",
+    "core_mechanic": "Temporal source-gating. Each simulated authority sees only its own historical evidence base, so disagreement is generated structurally rather than stylistically.",
+    "real_differentiator": "The gating is a real retrieval constraint, not a prompt flourish, and the output is structured disagreement rather than a single confident answer. Every other Q&A project on this page collapses machlokes into one response.",
+    "strategic_interest": "It is the only project that treats disagreement as the product. That is both the most intellectually honest posture for AI over a legal corpus and a general-purpose engine: any citation-dated corpus can be run through the same panel. It also makes the AI's confidence problem visible rather than hiding it.",
+    "whats_missing": "It shows WHERE the poskim differ but not WHY, and cannot yet show the moment a consensus flipped. The historical dating is only as good as Sefaria's metadata, which is uneven for later acharonim.",
+    "variations": [
+      "A general historical-panel engine for any dated citation corpus: run the same question through 1950s, 1980s, and 2020s medicine or securities law.",
+      "A consensus-drift tracer that follows one question forward through time and marks the exact generation where the majority position shifted.",
+      "An anachronism detector that scans a published teshuva or article and flags any source cited that postdates the authority it is attributed to.",
+      "A classroom mode that hides the synthesis and asks the student to predict which era said what before revealing it.",
+      "A 'steelman the minority' mode that takes the outlier posek and builds the strongest case for the position that lost."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 4,
+    "project_id": 59,
+    "name": "Torah Tree",
+    "category": "Learning & Study Tools",
+    "maturity": "Live product",
+    "link": "https://torahtree.com/",
+    "what_it_actually_is": "A Hebrew-first collaborative wiki with real-time editing, structured as a deep topic tree built on the Rambam's hierarchical organization of Torah knowledge rather than on the order of the texts.",
+    "core_mechanic": "A knowledge graph organized by concept hierarchy, with community write access, layered over a canonical text corpus that is read-only.",
+    "real_differentiator": "Almost everything else here is read-only over Sefaria's data. This one produces new structured data. It also indexes by concept rather than by book, chapter, verse, which is the harder and rarer axis.",
+    "strategic_interest": "The scarce asset in this whole ecosystem is not text (Sefaria gives that away) and not inference (commodity). It is structured conceptual metadata. Whoever accumulates the topic graph owns the layer everyone else has to license or rebuild. Torah Tree is one of the only projects positioned on it.",
+    "whats_missing": "Wikis die without a contributor flywheel. Nothing here converts passive learners into editors, and Hebrew-first shuts out most of the diaspora contributor base that would otherwise show up.",
+    "variations": [
+      "A read-mostly version where the contribution ask is a single tap ('does this source belong under this concept? yes/no'), harvesting structure from people who would never write a wiki entry.",
+      "An AI-drafted, human-ratified tree: the model proposes node placements and humans only approve or reject, inverting the labor.",
+      "Mirror the same tree in English, Spanish, French, and Russian with the Hebrew node IDs as the shared spine.",
+      "Expose the topic tree as a public API and let the other 100 projects on this page index against it.",
+      "A 'what did I never learn' view that diffs a user's study log against the full tree and shows the unvisited branches."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 5,
+    "project_id": 18,
+    "name": "Torah Scholar (MCP / agent skill)",
+    "category": "AI",
+    "maturity": "Open-source library",
+    "link": "https://github.com/abeperl/torah-scholar",
+    "what_it_actually_is": "Packages six Sefaria operations (search, verse, links, related, parsha, today) plus a dvar Torah generator as agent-callable commands, so any MCP-capable AI assistant gets the Sefaria library as a native capability.",
+    "core_mechanic": "Infrastructure, not an app. It makes the corpus addressable by other people's agents.",
+    "real_differentiator": "It is the only entry whose users are other software. Everything else on this page is an endpoint; this is a substrate the other endpoints could have been built on.",
+    "strategic_interest": "Strategically this is the highest-leverage item in the list and the least finished. Twenty separate teams on this page each rebuilt Sefaria retrieval from scratch. A good MCP layer means the twenty-first team does not have to, and whoever maintains it sits underneath everyone. The distribution is also free: it rides inside assistants people already use rather than fighting for its own users.",
+    "whats_missing": "Read-only, local install, no hosted endpoint, no write operations. A non-technical user cannot attach it to their assistant, which excludes the entire audience.",
+    "variations": [
+      "A hosted MCP endpoint so a non-technical user attaches the Sefaria library to their assistant with a URL and no install.",
+      "Add write operations so an agent can assemble and publish a real Sefaria source sheet, not just read.",
+      "A unified cross-corpus server spanning Sefaria, HebrewBooks, Otzaria, and Responsa behind one command surface.",
+      "A citation-verification tool other agents can call to check that a quoted passage actually says what a draft claims it says.",
+      "A metered commercial tier for the AI Torah apps on this page that are currently each paying their own retrieval engineering cost."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 6,
+    "project_id": 81,
+    "name": "Sefer Similarity Map",
+    "category": "Visualization & Data Analysis",
+    "maturity": "Demo/prototype",
+    "link": "https://jhostyk.github.io/SeferSimilarityMap/",
+    "what_it_actually_is": "Builds n-gram frequency vectors for each work in the corpus, reduces them with UMAP, and plots every text as a dot so linguistically similar books cluster together in a searchable map.",
+    "core_mechanic": "Relationships derived from the language of the texts themselves rather than from human-curated citation links.",
+    "real_differentiator": "Every other network or visualization project on this page draws Sefaria's curated link data. This one ignores it and measures the texts directly, so it can surface relationships nobody ever catalogued.",
+    "strategic_interest": "The link graph encodes what scholars already knew. The n-gram space can find what they did not, including candidate interpolations, misattributions, and stylistic borrowing across centuries. It is the only genuinely research-generative tool in the set rather than a research-presenting one.",
+    "whats_missing": "It stops at the book level. The interesting findings live at chapter and paragraph granularity, and it has no time axis, so style and chronology cannot be compared.",
+    "variations": [
+      "An outlier finder that flags individual chapters sitting far from their own book's cluster as candidate interpolations.",
+      "A time-axis version plotting linguistic similarity against known composition date to expose works whose style contradicts their attribution.",
+      "A style-match tool: feed in an unattributed manuscript fragment, get a ranked list of authors whose n-gram profile it resembles.",
+      "A translation-drift map showing how far each English translation sits from its Hebrew source in embedding space.",
+      "A 'who influenced whom' directed version using asymmetric phrase-reuse rather than symmetric similarity."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 7,
+    "project_id": 27,
+    "name": "Daf Quiz",
+    "category": "Learning & Study Tools",
+    "maturity": "Live but thin",
+    "link": "https://dafquiz.com/daf-yomi",
+    "what_it_actually_is": "Pulls the current Daf Yomi page and auto-generates a daily multiple-choice comprehension quiz on it.",
+    "core_mechanic": "Retention testing pinned to an existing global schedule that already has millions of participants.",
+    "real_differentiator": "Nearly every Daf Yomi project on this page is a delivery mechanism. This is the only one that asks whether anything stuck.",
+    "strategic_interest": "Daf Yomi's open secret is that most participants retain very little, and everyone knows it. That is a real, felt, unsolved pain attached to a large synchronized audience with a daily habit already formed. Distribution and retention are both solved; only the product is thin.",
+    "whats_missing": "It tests today and forgets yesterday. No spaced repetition, no cumulative review, no social layer, and it discards the wrong-answer data that would reveal which lines of the daf are systematically misread.",
+    "variations": [
+      "Spaced cumulative review that resurfaces questions from dapim learned months ago at the interval where forgetting starts.",
+      "A chevruta-versus-chevruta daily league where study pairs compete on the same generated quiz.",
+      "Harvest wrong answers across all users to identify which lines are systematically misread, then hand that back to maggidei shiur.",
+      "A pre-shiur diagnostic: three questions before the class so the teacher knows what to emphasize that morning.",
+      "The same generate-a-quiz-from-today's-unit pattern applied to any serialized curriculum (Mishnah Yomit, Rambam Yomi, a corporate compliance calendar)."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 8,
+    "project_id": 58,
+    "name": "Torah Study Tracker",
+    "category": "Learning & Study Tools",
+    "maturity": "Demo/prototype",
+    "link": "https://torahtracker.com/",
+    "what_it_actually_is": "A personal log where a learner records which references they studied and when, schedules reviews, and sees cumulative coverage rendered visually as a lifetime record. The domain currently returns a backend 404, so nothing is running.",
+    "core_mechanic": "The learner's own history is the primary object. The text is secondary.",
+    "real_differentiator": "Of 110 projects, this is one of maybe three where the user's data, not the canon, is the asset. Everything else renders the library.",
+    "strategic_interest": "It is the obvious missing layer and it is currently dead, which is the most actionable fact on this page. A study record that spans decades is the one thing a learner cannot get from Sefaria, cannot recreate, and would never switch away from. High switching cost, compounding value, and no incumbent.",
+    "whats_missing": "Everything. The product does not currently run. Beyond that: no review scheduling worth the name, no credentialing, no export, no institutional tie-in.",
+    "variations": [
+      "Spaced repetition over text references rather than flashcards, resurfacing a sugya right as forgetting sets in.",
+      "A lifetime coverage map shading every page of Shas and Tanakh you have ever opened, making the unstudied territory visually undeniable.",
+      "A verifiable, exportable study transcript usable for semicha programs, school credit, or a yeshiva application.",
+      "Passive capture: a browser extension that logs what you actually read on Sefaria instead of asking you to log it.",
+      "An institutional dashboard where a beit midrash sees aggregate coverage across its chaburah and finds the gaps."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 9,
+    "project_id": 53,
+    "name": "The People's Talmud",
+    "category": "Learning & Study Tools",
+    "maturity": "Live product",
+    "link": "https://www.thepeoplestalmud.com/",
+    "what_it_actually_is": "A hand-built index over 7,500 sections of Talmud with 3,500 thematic links and 3,000 one-line brain teasers, so a user enters by subject or by a provocative question rather than by tractate and page.",
+    "core_mechanic": "An original editorial layer (the teasers) used as the entry point instead of the table of contents.",
+    "real_differentiator": "The 3,000 one-liners are a genuine content asset built by hand that no other project on this page possesses. It competes on editorial judgment rather than on technology.",
+    "strategic_interest": "It is proof that the binding constraint in this space is not access to text, which is free, but a reason to open it. A curiosity hook is worth more than another reader interface. It is also the clearest demonstration that a non-technical editorial moat still works when everyone else is racing on features.",
+    "whats_missing": "The teasers are static and undifferentiated by user. Nothing learns which hooks a given person bites on, and there is no tool that lets anyone else produce teasers at scale.",
+    "variations": [
+      "A daily teaser feed that sends one provocative line and only reveals the sugya after the user commits to an answer.",
+      "A curiosity graph that logs which teasers a user bites on and reshapes their browsing path toward the themes their clicks reveal.",
+      "A teaser-authoring tool for teachers that turns any selected passage into a set of drafted hooks, industrializing what this site built by hand.",
+      "Teasers as the ad unit: one-line Talmudic provocations as sponsored social posts that route to the sugya.",
+      "The same hook-first indexing applied to any intimidating canon (philosophy, constitutional law, the Mahabharata)."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 10,
+    "project_id": 79,
+    "name": "Quantified Cantillation",
+    "category": "Visualization & Data Analysis",
+    "maturity": "Live product",
+    "link": "https://quantifiedcantillation.nl/",
+    "what_it_actually_is": "Click any cantillation mark and see the conditional probability of every mark that can legally follow it, with a per-chapter frequency chart linking through to the actual verses.",
+    "core_mechanic": "Treating a traditional notation system as a formal grammar with measurable transition probabilities.",
+    "real_differentiator": "Nobody else on this page treats any part of the tradition as a statistical object with quantifiable structure. It is the only entry doing real computational linguistics on the notation layer.",
+    "strategic_interest": "It is a working demonstration that centuries-old oral conventions have machine-discoverable grammar. The technique generalizes to any notational tradition, and it produces something practically valuable to baalei keriah: a difficulty score for an upcoming reading.",
+    "whats_missing": "Purely descriptive. It tells you the probabilities but does not use them for anything: no generation, no training drills, no difficulty scoring, no listening.",
+    "variations": [
+      "Sample the transition matrix to generate plausible but nonexistent trope sequences as drill material for rare patterns.",
+      "A rarity meter that scores an upcoming reading by how many low-probability transitions it contains so a baal koreh knows where the traps are.",
+      "Apply the same n-gram transition analysis to Masoretic vowel patterns, or to Quranic tajweed, to compare notation grammars across traditions.",
+      "A trope autocomplete for scribes and editors that flags a sequence the corpus has never produced.",
+      "Couple it to audio: score a recorded reading against the expected transition probabilities and mark the divergences."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 11,
+    "project_id": 74,
+    "name": "Tikkun.io",
+    "category": "Apps & Other Tools",
+    "maturity": "Live product",
+    "link": "https://tikkun.io/",
+    "what_it_actually_is": "Displays any Torah reading as a scribal-style unvowelled column beside the pointed and cantillated text, so a reader practices against what the scroll actually looks like.",
+    "core_mechanic": "Training for a physical ritual performance, with the target artifact reproduced faithfully rather than adapted for the screen.",
+    "real_differentiator": "Nearly everything on this page serves study or analysis. This serves a performance skill with a hard deadline and a public audience, which is a completely different product logic.",
+    "strategic_interest": "Performance prep has properties study products envy: an immovable deadline, real stakes, a defined success criterion, and a natural willingness to pay. It is also the clearest case on the page where 'digitize the text' would have been the wrong answer and 'reproduce the physical artifact' was the right one.",
+    "whats_missing": "It is a viewer, not a coach. No recording, no feedback, no progressive difficulty, no tracking of what you got wrong last week, no roster management for the shul that has to assign readings.",
+    "variations": [
+      "A recording mode that captures you chanting and marks where you diverged from the expected trope melody.",
+      "An occlusion trainer that fades vowels and trope marks progressively over a rehearsal week until only the scribal column remains.",
+      "The same dual-column mechanic for Megillot and Haftarot with an assignment tracker for a shul's reading roster.",
+      "A gabbai console that assigns aliyot, sends each reader their portion, and shows who has actually practiced.",
+      "The same 'practice against the real artifact' pattern applied to any memorized public performance (liturgy, oral argument, theatrical lines)."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 12,
+    "project_id": 32,
+    "name": "IvritSuite.com",
+    "category": "Learning & Study Tools",
+    "maturity": "Live product",
+    "link": "https://ivritsuite.com/",
+    "what_it_actually_is": "A free classroom Hebrew literacy suite whose centerpiece renders the weekly parasha with color-coded vowels, transliteration, a cantillation toggle, and karaoke-style chanted audio that highlights each word as it is sung. Bundles a worksheet generator, a trope tutor, and a tool that turns a student's handwritten Hebrew letters into an installable font.",
+    "core_mechanic": "Decoding fluency rather than comprehension, delivered through content the student is already required to encounter.",
+    "real_differentiator": "It is the only entry targeting the mechanical skill of reading Hebrew rather than understanding a text, and one of very few designed around a teacher's actual workflow rather than an individual learner's.",
+    "strategic_interest": "Decoding is the real bottleneck for most Jewish day school students and it is upstream of every other product on this page. Nothing else in the showcase works if the student cannot read the letters. It also has an institutional buyer, which almost nothing else here does.",
+    "whats_missing": "It is not adaptive. The coloring, drills, and worksheets are identical for a student who confuses tzeirei and segol and one who does not. It never listens to the student read.",
+    "variations": [
+      "Adaptive vowel coloring that tints only the vowels a specific learner actually confuses, derived from their error history.",
+      "A karaoke reader that listens to the student read aloud and colors words red where pronunciation diverged.",
+      "A worksheet generator that emits printable drills targeting the exact letters a class got wrong on last week's assessment.",
+      "A parent-facing five-minute nightly drill auto-generated from what the child missed in class that day.",
+      "The handwriting-to-font tool spun out on its own for any script-learning context (Arabic, Cyrillic, Devanagari)."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 13,
+    "project_id": 55,
+    "name": "Torah Library Add-On for Google Docs",
+    "category": "Learning & Study Tools",
+    "maturity": "Live product",
+    "link": "https://workspace.google.com/marketplace/app/torah\\_library/947071438143",
+    "what_it_actually_is": "A Google Docs sidebar that searches Sefaria and inserts formatted Hebrew and English source text directly into the open document.",
+    "core_mechanic": "Put the corpus inside the tool people already work in, rather than asking them to come to yours.",
+    "real_differentiator": "It is the only project that declines to build a destination. It inherits commenting, versioning, sharing, and permissions from Docs for free, which is most of what a source-sheet tool is.",
+    "strategic_interest": "This is the distribution lesson of the entire page. Sefaria's own source sheet tool exists; so do several competitors here. This one wins by not competing, and it sits in the workflow of every rabbi, teacher, and educator who already drafts in Docs. Zero new habits required.",
+    "whats_missing": "Insertion only. It cannot verify, cannot check that a quoted passage matches the canonical text, and does not exist for Word, LaTeX, or Notion, which is where the rest of the writing happens.",
+    "variations": [
+      "The same insertion pattern as a Word add-in and a LaTeX package, aimed at academics writing outside Google's ecosystem.",
+      "A citation linter that scans a finished document, finds quoted Hebrew passages, and flags any that do not match the canonical text or carry a wrong reference.",
+      "Insertion for any structured corpus with an open API (case law, clinical guidelines, technical standards) since the mechanic is corpus-agnostic.",
+      "A reverse mode: paste a finished source sheet and it reconstructs the live linked references automatically.",
+      "A collaborative shiur-prep template where the sources, the questions, and the timing plan live in one Doc the whole faculty can fork."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 14,
+    "project_id": 49,
+    "name": "Talmud.page",
+    "category": "Learning & Study Tools",
+    "maturity": "Live product",
+    "link": "https://talmud.page/",
+    "what_it_actually_is": "A stripped-down Talmud reader that renders each amud as sequential text-with-commentary blocks instead of the traditional tzurat hadaf layout, with commentaries collapsible inline.",
+    "core_mechanic": "Deliberately abandoning the canonical page geometry rather than trying to reproduce it on a small screen.",
+    "real_differentiator": "Most readers on this page either recreate the classic layout or apologize for not doing so. This one makes a clean argument that the geometry was a printing constraint, not a pedagogical one.",
+    "strategic_interest": "It is the only project in the set making an explicit, testable claim about reading. Nobody has ever measured what tzurat hadaf actually does to comprehension and completion, and this is the natural instrument for finding out. The linearization engine is also reusable across any nested-commentary corpus.",
+    "whats_missing": "The claim is untested. There is no measurement, no comparison, and no published evidence that the linear layout helps anyone. It is a strong hypothesis with no data behind it.",
+    "variations": [
+      "A typographic A/B lab that serves the same daf in three layouts and measures actual completion and comprehension, then publishes what page design does to retention.",
+      "A reading-mode compiler that ingests any nested commentary corpus (Shulchan Aruch with nosei kelim, annotated legal codes) and emits a mobile-first linearized reader.",
+      "A commentary budget: tell it you have twelve minutes and it selects which commentaries to show.",
+      "A layout that visibly marks where the anonymous stam editorial voice takes over from the named amoraim, making layer analysis the default reading mode.",
+      "A side-by-side toggle that lets a learner flip between traditional and linear on the same amud, so the geometry becomes something you notice rather than something you inherit."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 15,
+    "project_id": 36,
+    "name": "Kindle Seforim",
+    "category": "Learning & Study Tools",
+    "maturity": "Live but thin",
+    "link": "https://kindleseforim.paritcher.com/",
+    "what_it_actually_is": "Offers roughly seventeen classical texts as pre-built EPUB and KFX downloads with correct nikud placement, plus a Hebrew font package and a StarDict Jastrow, for manual sideloading to a Kindle.",
+    "core_mechanic": "Solving a device-level rendering problem (right-to-left text with vowel and cantillation positioning in reflowable formats) that no platform has solved.",
+    "real_differentiator": "It is the only project addressing typesetting as an engineering problem rather than treating text as content. Nobody else on this page touches nikud placement, font embedding, or e-reader rendering.",
+    "strategic_interest": "The underlying fix is worth more than the seventeen books it currently ships. Correct Hebrew nikud in reflowable formats is an unsolved problem across the entire publishing industry, and whoever solves it properly owns a library rather than a website. E-ink is also the only screen many observant readers will accept for long study.",
+    "whats_missing": "Seventeen hand-built files and a manual sideload. No on-demand conversion, no delivery, no library. The hard part is done and the easy part is missing.",
+    "variations": [
+      "On-demand conversion: paste any Sefaria reference, get a correctly typeset file for your specific device.",
+      "Scheduled delivery that emails tomorrow's daily portion to your Kindle overnight so it is waiting each morning.",
+      "Spin the nikud and cantillation positioning fix out as a right-to-left typesetting library for reflowable e-book formats generally.",
+      "A print-on-demand pipeline: assemble a custom sefer of exactly the texts you are learning this zman and have it bound.",
+      "Partner with e-reader manufacturers to ship correct Hebrew rendering at the firmware level."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 16,
+    "project_id": 86,
+    "name": "Eitz HaRabanim",
+    "category": "Visualization & Data Analysis",
+    "maturity": "Live product",
+    "link": "https://eitz-harabanim.com/",
+    "what_it_actually_is": "A zoomable directed graph of Talmudic sages with arrows pointing from teacher to student, filterable by region and era, with bilingual name search.",
+    "core_mechanic": "Graphing people and intellectual lineage rather than texts and citations.",
+    "real_differentiator": "In a set full of text-link network visualizations, this is the one that graphs humans. Different node type, different questions answerable.",
+    "strategic_interest": "Lineage is how the tradition actually understands itself, and it is the axis nobody has digitized well. It is also the only visualization here with an obvious emotional hook: a living person can eventually find themselves on the graph, which is a fundamentally different relationship than admiring a citation network.",
+    "whats_missing": "It stops at the Amoraim. The chain from the Talmud to a living rabbi is unbroken in principle and undigitized in practice, and that is where the personal stake lives.",
+    "variations": [
+      "A lineage tracer: pick any two sages and see the shortest teacher-student chain connecting them.",
+      "Color each sage by how often they are quoted in the Bavli so influence and pedigree can be compared side by side.",
+      "Extend the graph through modern semichah chains so a living rabbi can trace their own line back to the Amoraim.",
+      "Overlay geography and migration so you can watch the center of learning move from Eretz Yisrael to Bavel to Europe.",
+      "The same teacher-student graph mechanic applied to academic doctoral advising, martial arts lineages, or any master-apprentice tradition."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 17,
+    "project_id": 68,
+    "name": "Pninim",
+    "category": "Apps & Other Tools",
+    "maturity": "Live but thin",
+    "link": "https://pninim.yiddishe-kop.com/",
+    "what_it_actually_is": "Lets a learner attach their own written notes and chiddushim to a specific Talmud reference and keep them in a searchable personal collection.",
+    "core_mechanic": "The user as author. Their output, not the canon, is the stored artifact.",
+    "real_differentiator": "Almost every project here renders or analyzes the tradition. This one records what the learner adds to it.",
+    "strategic_interest": "Writing your own chiddushim is the traditional apex of Talmud study and nothing digital supports it. Whoever holds a learner's accumulated notes holds the least substitutable data in the ecosystem. It also inverts the entire showcase's assumption that the user is a consumer.",
+    "whats_missing": "It is a notebook with no memory and no social layer. Your note from three years ago never comes back to you, your chevruta cannot see it, and nothing turns a year of notes into anything.",
+    "variations": [
+      "Surface your own note from three years ago the moment you land on that daf again, turning the notebook into a spaced-repetition trap.",
+      "A shared chavruta layer where two learners write privately on the same sugya and the notes unlock to each other only after both submit.",
+      "A publishing pipeline that collects a year of notes and typesets them into a printable sefer with proper source apparatus.",
+      "A note graph that finds where your own chiddushim on distant sugyot are actually making the same argument.",
+      "An anonymized corpus of learner insights per daf, so a maggid shiur can see what a thousand people independently noticed."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 18,
+    "project_id": 28,
+    "name": "Daily Torah Study TRMNL Plugin",
+    "category": "Learning & Study Tools",
+    "maturity": "Live but thin",
+    "link": "https://usetrmnl.com/recipes/151619",
+    "what_it_actually_is": "A recipe for the TRMNL e-ink display that polls Sefaria's Calendars API and renders the day's learning schedule as a static screen.",
+    "core_mechanic": "Ambient, glanceable, single-purpose hardware. No app, no notification, no feed.",
+    "real_differentiator": "The only entry in all 110 targeting dedicated physical hardware rather than a phone or a browser.",
+    "strategic_interest": "Every other product on this page competes for attention against the entire internet on the same device. This one does not. The category is tiny today and the constraint is real: study needs the absence of the phone, and no software product can offer that. Also the natural home for any Shabbat-compatible design.",
+    "whats_missing": "It is a display, not an instrument. It shows the schedule and does nothing else, with no interaction, no memory, and no tie to what the person actually learned.",
+    "variations": [
+      "An e-ink panel showing one verse plus commentary that refreshes only when you press a physical button, forcing deliberate pacing.",
+      "A synagogue lobby display rotating the day's learning, zmanim, and yahrzeits pulled from the congregation's own records.",
+      "A desk device that shows the single line you most recently failed on a quiz app until you mark it understood.",
+      "A Shabbat-mode device set before Shabbat that advances passively through the day's learning with no user-initiated electronics.",
+      "A shared household display where each family member's daily learning appears, making the practice visible to everyone in the room."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 19,
+    "project_id": 3,
+    "name": "ChavrutAI",
+    "category": "AI",
+    "maturity": "Live product",
+    "link": "https://chavrutai.com/contents",
+    "what_it_actually_is": "A browsable Hebrew-English reader covering all 37 tractates with chapter navigation and a curated set of famous pages as entry points. Now redirects to bekiut.com, suggesting a rebrand toward broad-coverage bekiut study.",
+    "core_mechanic": "Curated entry points into a corpus too large to enter linearly.",
+    "real_differentiator": "It is filed under AI but is really a reading and navigation interface, and the 'famous pages' curation is the actual product. The rebrand toward bekiut signals a bet on breadth over depth.",
+    "strategic_interest": "The bekiut versus iyun split is the oldest real pedagogical decision in Talmud study and nothing else on this page takes a position on it. A product built explicitly for coverage rather than depth is a genuine strategic stance, not a feature set. The 'famous pages first' idea also quietly proposes an alternative curriculum.",
+    "whats_missing": "Pacing is set by the daf boundary, which is an artifact of printing, not of content. Nothing adapts session length to the learner's actual reading speed or the sugya's actual boundaries.",
+    "variations": [
+      "A pace-aware reader that sizes each session to your historical reading speed rather than to the daf boundary.",
+      "A 'famous pages' first curriculum teaching the Talmud through its fifty most-cited sugyot before ever going linear.",
+      "A reader that visibly marks where the stam editorial voice takes over from the named amoraim.",
+      "A bekiut mode with a hard timer and a comprehension floor: cover the ground, verify the minimum stuck, move on.",
+      "Sugya-boundary navigation that replaces daf navigation entirely, so units of reading match units of argument."
+    ],
+    "schema_version": 1
+  },
+  {
+    "rank": 20,
+    "project_id": 40,
+    "name": "Koveah",
+    "category": "Learning & Study Tools",
+    "maturity": "Live but thin",
+    "link": "https://koveah.org/",
+    "what_it_actually_is": "Lets a user construct a custom learning schedule from sources in the Sefaria library and follow it on their own cycle.",
+    "core_mechanic": "User-defined pacing over an arbitrary corpus, rather than a fixed global calendar.",
+    "real_differentiator": "Every other schedule-driven project here inherits an existing cycle (Daf Yomi, parasha, Rambam Yomi). This one lets the learner define the cycle, which is a small change with large consequences.",
+    "strategic_interest": "Fixed cycles are the reason most people fail: you join mid-stream, fall behind, and quit because the calendar does not wait. Self-paced scheduling is the standard fix in every other learning category and is nearly absent here. It is also the natural substrate for institutional programs that need their own calendar.",
+    "whats_missing": "It generates a schedule and then leaves you alone. No adaptation when you fall behind, no catch-up logic, no accountability, no group mode.",
+    "variations": [
+      "A schedule that reflows automatically when you miss days instead of accumulating debt and shame.",
+      "A group mode where a chaburah defines a shared custom cycle and sees each other's progress.",
+      "Reverse planning: name your finish date and the target text, and it computes the daily unit.",
+      "An institutional version where a school or shul publishes a custom cycle its members can subscribe to.",
+      "The same custom-cycle engine applied to any long corpus (a legal code, a technical certification syllabus, a reading list)."
+    ],
+    "schema_version": 1
+  }
+]

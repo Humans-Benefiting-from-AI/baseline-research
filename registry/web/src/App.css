@@ -145,6 +145,20 @@ body {
   font-size: 0.9rem;
 }
 
+.analysis-section .variation-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.9rem;
+}
+
+.analysis-section .variation-list li {
+  margin-bottom: 0.35rem;
+}
+
+.analysis-section .variation-list li:last-child {
+  margin-bottom: 0;
+}
+
 .analysis-section.highlight {
   padding-left: 1rem;
   border-left: 3px solid var(--accent);
