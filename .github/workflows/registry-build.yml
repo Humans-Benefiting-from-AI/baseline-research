@@ -4,17 +4,74 @@ on:
   push:
     branches: [main, claude/repo-status-next-steps-qtm836]
     paths:
-      - 'registry/web/**'
+      - 'registry/**'
       - '.github/workflows/registry-build.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'registry/web/**'
+      - 'registry/**'
       - '.github/workflows/registry-build.yml'
 
 jobs:
+  validate-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Parse and check registry data
+        run: python3 registry/scripts/parse_markdown_to_json.py --check
+
+      - name: Assert registry schema invariants
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          ALLOWED_CATEGORIES = {
+              "AI",
+              "Learning & Study Tools",
+              "Extensions & API Integrations",
+              "Apps & Other Tools",
+              "Visualization & Data Analysis",
+              "Community, Interaction & Social",
+          }
+
+          reg = json.loads(Path("registry/data/registry.json").read_text())
+          deep = json.loads(Path("registry/data/deep_dive.json").read_text())
+          web_reg = json.loads(Path("registry/web/src/data/registry.json").read_text())
+          web_deep = json.loads(Path("registry/web/src/data/deep_dive.json").read_text())
+
+          assert len(reg) == 110, len(reg)
+          assert web_reg == reg
+          ids = [p["id"] for p in reg]
+          assert len(set(ids)) == 110
+          assert set(ids) == set(range(1, 111))
+          for p in reg:
+              assert not re.fullmatch(r"\d+", p["name"]), p
+              assert p["category"] in ALLOWED_CATEGORIES, p
+              assert isinstance(p["variation_ideas"], list) and len(p["variation_ideas"]) == 3, p["id"]
+
+          assert len(deep) == 20, len(deep)
+          assert web_deep == deep
+          reg_ids = set(ids)
+          ranks = [d["rank"] for d in deep]
+          assert set(ranks) == set(range(1, 21))
+          for d in deep:
+              assert d["project_id"] in reg_ids, d
+              assert isinstance(d["variations"], list) and len(d["variations"]) == 5, d["rank"]
+
+          print("OK: registry schema invariants hold")
+          PY
+
   build:
     runs-on: ubuntu-latest
+    needs: validate-data
 
     defaults:
       run:
