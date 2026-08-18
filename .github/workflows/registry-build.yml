@@ -12,6 +12,9 @@ on:
       - 'registry/**'
       - '.github/workflows/registry-build.yml'
 
+permissions:
+  contents: read
+
 jobs:
   validate-data:
     runs-on: ubuntu-latest
