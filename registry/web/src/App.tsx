@@ -96,8 +96,8 @@ function App() {
                 <div className="analysis-section">
                   <h3>Variation Ideas</h3>
                   <ul className="variation-list">
-                    {p.variation_ideas.map((idea) => (
-                      <li key={idea}>{idea}</li>
+                    {p.variation_ideas.map((idea, index) => (
+                      <li key={index}>{idea}</li>
                     ))}
                   </ul>
                 </div>

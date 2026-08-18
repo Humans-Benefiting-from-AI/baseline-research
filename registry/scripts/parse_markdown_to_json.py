@@ -122,8 +122,10 @@ def parse_main_row(cols: list[str], line_no: int) -> dict:
         if cleaned:
             variation_ideas.append(cleaned)
 
-    if len(variation_ideas) < 1:
-        raise ParseError(f"Main table line {line_no}: missing variation ideas")
+    if len(variation_ideas) != 3:
+        raise ParseError(
+            f"Main table line {line_no}: expected 3 variation ideas, got {len(variation_ideas)}"
+        )
 
     return {
         "id": project_id,
@@ -170,8 +172,10 @@ def parse_deep_row(cols: list[str], header: list[str], line_no: int, registry_id
 
     variations_cell = row.get("Variations (5)", "") or ""
     variations = split_numbered_variations(variations_cell)
-    if len(variations) < 1:
-        raise ParseError(f"Deep dive line {line_no}: missing variations")
+    if len(variations) != 5:
+        raise ParseError(
+            f"Deep dive line {line_no}: expected 5 variations, got {len(variations)}"
+        )
 
     return {
         "rank": rank,
@@ -282,8 +286,10 @@ def validate_projects(projects: list[dict]) -> None:
             raise ParseError(f"Project {p['id']}: invalid category {p['category']!r}")
         if p["maturity"] not in ALLOWED_MATURITIES:
             raise ParseError(f"Project {p['id']}: invalid maturity {p['maturity']!r}")
-        if not isinstance(p.get("variation_ideas"), list) or len(p["variation_ideas"]) < 1:
-            raise ParseError(f"Project {p['id']}: variation_ideas must be a non-empty list")
+        if not isinstance(p.get("variation_ideas"), list) or len(p["variation_ideas"]) != 3:
+            raise ParseError(
+                f"Project {p['id']}: variation_ideas must be a list of exactly 3 items"
+            )
 
 
 def validate_deep_dives(deep_dives: list[dict], registry_ids: set[int]) -> None:
@@ -301,8 +307,10 @@ def validate_deep_dives(deep_dives: list[dict], registry_ids: set[int]) -> None:
             raise ParseError(
                 f"Deep dive rank {d['rank']}: project_id {d['project_id']} missing from registry"
             )
-        if not isinstance(d.get("variations"), list) or len(d["variations"]) < 1:
-            raise ParseError(f"Deep dive rank {d['rank']}: variations must be a non-empty list")
+        if not isinstance(d.get("variations"), list) or len(d["variations"]) != 5:
+            raise ParseError(
+                f"Deep dive rank {d['rank']}: variations must be a list of exactly 5 items"
+            )
 
 
 def write_json(path: Path, data: object) -> None:
