@@ -1,30 +1,15 @@
 # Halachic Reasoning Evaluation (HRE) Harness
 
-This directory contains the 100-question JSONL dataset and the Python evaluation harness used to run the tests against frontier AI models (OpenAI's `gpt-4o` and Anthropic's `claude-3.5-sonnet`).
+This directory contains the question JSONL files, the historical `hre_results.jsonl` run, and the evaluation harness in [`harness/`](harness/README.md).
 
-## How to Run the Benchmark
+The harness scores OpenAI, Anthropic, and Google. Model ids are arguments (or `OPENAI_MODEL`, `ANTHROPIC_MODEL`, and `GOOGLE_MODEL`). Dry-run is the default: a mock adapter, no network call, and no write to `hre_results.jsonl`.
 
-1. Navigate to this directory:
-   ```bash
-   cd benchmark
-   ```
+```bash
+cd benchmark
+pip install -r requirements-dev.txt
+python -m harness --limit 10
+```
 
-2. Install the required Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
+`python run_evals.py --limit 10` is the same entry point. Reports go to `benchmark/reports/` and carry the banner that the questions are not yet audited by Elie.
 
-3. Set up your API keys:
-   Create a `.env` file in this directory and add your keys:
-   ```env
-   OPENAI_API_KEY=sk-your-openai-key
-   ANTHROPIC_API_KEY=sk-ant-your-anthropic-key
-   ```
-
-4. Execute the evaluation script:
-   ```bash
-   python run_evals.py
-   ```
-
-## Output
-The script will ping both APIs, feed them the strict system prompt and the Halachic scenario, parse the answer, and score it against the ground truth. It will output a `hre_results.jsonl` file containing the raw model responses and binary scores.
+A live run (`--no-dry-run`) reads `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, and `GOOGLE_API_KEY` from the environment only. Install `requirements.txt` before that. Usage, the rubric, and the report layout are in [`harness/README.md`](harness/README.md).

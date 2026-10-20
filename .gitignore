@@ -2,6 +2,9 @@ node_modules/
 dist/
 .env
 .DS_Store
+__pycache__/
+.pytest_cache/
+benchmark/reports/
 benchmark/batch_input*.jsonl
 benchmark/scholar_*/
 !benchmark/scholar_*/
