@@ -27,6 +27,29 @@ class SpyJudge(LLMJudge):
         return Score(1, "judge", "spy")
 
 
+def test_markdown_and_punctuation_still_match_the_leading_label():
+    assert score_response(_question("FORBIDDEN"), "**FORBIDDEN.**").method == "exact"
+    assert score_response(_question("PERMITTED"), "**PERMITTED.**").correct == 1
+    assert score_response(_question("YES"), "*YES*").method == "exact"
+    assert score_response(_question("DEFENDANT"), "_DEFENDANT_").method == "exact"
+    assert score_response(_question("YES"), "YES! The citation is later.").method == "exact"
+
+
+def test_disagreeing_leading_label_is_wrong_even_if_the_expected_label_appears_later():
+    judge = SpyJudge()
+    scored = score_response(
+        _question("FORBIDDEN"),
+        "**PERMITTED.** The rule of kavu'a treats a fixed item as a safek, so it is FORBIDDEN.",
+        judge=judge,
+    )
+    assert scored.correct == 0
+    assert scored.status == "scored"
+    assert scored.method == "mismatch"
+    assert "PERMITTED" in scored.detail
+    assert "FORBIDDEN" in scored.detail
+    assert judge.calls == 0
+
+
 def test_exact_label_and_leading_conclusion():
     assert score_response(_question("FORBIDDEN"), "FORBIDDEN").method == "exact"
     scored = score_response(

@@ -2,14 +2,19 @@
 
 Rubric, applied in order. The first hit wins.
 
-1. Exact. The normalized answer is the ground-truth label, or it begins
-   with that label on a word boundary (``YES. ...``, ``FORBIDDEN, ...``).
-2. Keyword. The ground-truth phrase occurs later in the answer, again on
-   word boundaries. Short labels such as ``YES`` and ``NO`` do not match
-   inside longer words (``yesterday``, ``anomaly``, ``know``).
-3. LLM-as-judge. Only when a judge is passed and ``enabled`` is true.
-   The default run does not construct an enabled judge, and a disabled
-   judge is never called.
+1. Exact. Markdown emphasis and punctuation are stripped, then the answer
+   matches if it is the ground-truth label or begins with it
+   (``**FORBIDDEN.**``, ``YES. ...``).
+2. Leading disagreement. If that opening label is a different canonical
+   label, the answer is wrong. A later mention of the expected label is
+   not a keyword hit. ``**PERMITTED.** ... FORBIDDEN`` is wrong when the
+   ground truth is FORBIDDEN.
+3. Keyword. Used only when the answer does not open with a canonical
+   label. The ground-truth phrase must appear on word boundaries.
+   ``YES`` does not match inside ``yesterday``.
+4. LLM-as-judge. Only when a judge is passed and ``enabled`` is true,
+   and only after the checks above miss. A leading disagreement does
+   not call the judge. The default run does not enable one.
 
 The original ``run_evals.py`` loop used a raw substring check
 (``ground_truth.lower() in response``). Whole-phrase matching replaces
@@ -126,8 +131,25 @@ def score_response(
             status="empty",
         )
 
+    prepared = _prepare(response)
+    if not prepared:
+        return Score(
+            0,
+            "empty",
+            "Provider returned an empty answer.",
+            status="empty",
+        )
+
     if exact_match(question.ground_truth, response):
         return Score(1, "exact", "Leading conclusion matches the ground truth.")
+
+    opened = _leading_label(prepared)
+    if opened is not None and opened != _prepare(question.ground_truth):
+        return Score(
+            0,
+            "mismatch",
+            f"Leading label {opened.upper()} disagrees with {question.ground_truth}.",
+        )
 
     if keyword_match(question.ground_truth, response):
         return Score(1, "keyword", "Ground-truth phrase appears as a whole phrase.")
@@ -139,25 +161,43 @@ def score_response(
 
 
 def exact_match(ground_truth: str, response: str) -> bool:
-    label = _normalize(ground_truth)
-    text = _normalize(response)
-    if not label or not text:
-        return False
-    if text == label:
-        return True
-    match = re.match(re.escape(label) + r"(?!\w)", text)
-    return match is not None and _is_standalone(label, text, match.start())
+    opened = _leading_label(_prepare(response))
+    expected = _prepare(ground_truth)
+    return opened is not None and opened == expected
 
 
 def keyword_match(ground_truth: str, response: str) -> bool:
-    label = _normalize(ground_truth)
-    text = _normalize(response)
+    label = _prepare(ground_truth)
+    text = _prepare(response)
     if not label or not text:
         return False
     for match in re.finditer(r"(?<!\w)" + re.escape(label) + r"(?!\w)", text):
         if _is_standalone(label, text, match.start()):
             return True
     return False
+
+
+def _leading_label(prepared: str) -> str | None:
+    """Canonical label at the start of a prepared answer, longest first."""
+    if not prepared:
+        return None
+    for label in CANONICAL_LABELS:
+        if re.match(re.escape(label) + r"(?!\w)", prepared) and _is_standalone(
+            label, prepared, 0
+        ):
+            return label
+    return None
+
+
+def _prepare(text: str) -> str:
+    """Drop markdown emphasis and punctuation, then collapse whitespace.
+
+    ``**PERMITTED.**`` becomes ``permitted`` so the leading-label check
+    sees the conclusion the model actually opened with.
+    """
+    without_emphasis = re.sub(r"[*_`]+", "", text)
+    without_punctuation = re.sub(r"[^\w\s]+", " ", without_emphasis, flags=re.UNICODE)
+    return re.sub(r"\s+", " ", without_punctuation.strip()).casefold()
 
 
 def _is_standalone(label: str, text: str, start: int) -> bool:
@@ -169,10 +209,6 @@ def _is_standalone(label: str, text: str, start: int) -> bool:
         if text.startswith(other, start) and (end == len(text) or not text[end].isalnum()):
             return False
     return True
-
-
-def _normalize(text: str) -> str:
-    return re.sub(r"\s+", " ", text.strip()).casefold()
 
 
 def _is_transport_failure(response: str) -> bool:

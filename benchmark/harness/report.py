@@ -220,9 +220,11 @@ def _markdown(report: ModelReport) -> str:
         f"- Accuracy: {_format_accuracy(report.accuracy)} "
         f"({report.correct}/{report.scored} scored; errors and empty answers are excluded)",
         f"- LLM-as-judge: {judge}",
-        "- Rubric: exact match on the leading ground-truth label, then a "
-        "whole-phrase keyword match. The judge hook runs only when enabled "
-        "and only after both automatic checks miss.",
+        "- Rubric: markdown and punctuation are stripped, then an exact "
+        "match on the leading ground-truth label counts. A different leading "
+        "label is wrong even if the expected label appears later. Otherwise "
+        "a whole-phrase keyword match counts. The judge hook runs only when "
+        "enabled and only after those checks miss.",
         "",
         "## Accuracy by archetype",
         "",

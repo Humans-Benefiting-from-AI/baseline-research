@@ -30,9 +30,34 @@ _DISCONNECT_MARKERS = (
 )
 
 
+# Shown on the report when a provider refuses the call for quota or billing.
+# 429 is not retried: repeating it will not succeed until the quota changes.
+QUOTA_ERROR_MESSAGE = (
+    "quota/billing: 429 RESOURCE_EXHAUSTED. This call was not retried."
+)
+
+
+def is_quota_error(exc: BaseException) -> bool:
+    """True for HTTP 429 and RESOURCE_EXHAUSTED. These are not retried."""
+    if isinstance(exc, (MissingAPIKey, AdapterError)):
+        return False
+    if _status_code(exc) == 429:
+        return True
+    text = f"{type(exc).__name__} {exc}".lower()
+    if re.search(r"\b429\b", text):
+        return True
+    return (
+        "resource_exhausted" in text
+        or "resource exhausted" in text
+        or "resourceexhausted" in text
+    )
+
+
 def is_retryable(exc: BaseException) -> bool:
     """True for HTTP 503 and for dropped connections. Not for other errors."""
     if isinstance(exc, (MissingAPIKey, AdapterError)):
+        return False
+    if is_quota_error(exc):
         return False
     status = _status_code(exc)
     if status == 503:
@@ -75,10 +100,14 @@ def _status_code(exc: BaseException) -> int | None:
         value = getattr(exc, attr, None)
         if isinstance(value, int):
             return value
+        if isinstance(value, str) and value.isdigit():
+            return int(value)
     response = getattr(exc, "response", None)
     if response is None:
         return None
     value = getattr(response, "status_code", None)
     if isinstance(value, int):
         return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
     return None

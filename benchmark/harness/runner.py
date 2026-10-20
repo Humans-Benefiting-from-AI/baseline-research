@@ -13,7 +13,7 @@ from harness.loader import Question, load_questions
 from harness.models import API_KEY_ENV, DEFAULT_MAX_TOKENS
 from harness.prompts import SYSTEM_PROMPT, build_user_prompt
 from harness.report import ItemResult, ModelReport, UnsafeOutputError, assert_safe_output, write_reports
-from harness.retry import call_with_retry
+from harness.retry import QUOTA_ERROR_MESSAGE, call_with_retry, is_quota_error
 from harness.scoring import LLMJudge, Score, score_response
 
 
@@ -101,13 +101,17 @@ def _complete(adapter, question: Question):
         raise
     except Exception as exc:
         message = _redact(str(exc))
+        if is_quota_error(exc):
+            detail = QUOTA_ERROR_MESSAGE
+        else:
+            detail = message[:500]
         return Completion(
-            text=f"ERROR: {message}",
+            text=f"ERROR: {detail}",
             model=getattr(adapter, "model", ""),
             provider=getattr(adapter, "provider", ""),
             mock=False,
             status="error",
-            detail=message[:500],
+            detail=detail,
         )
 
 

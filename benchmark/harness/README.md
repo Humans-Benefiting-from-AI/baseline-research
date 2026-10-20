@@ -79,13 +79,14 @@ python -m harness --no-dry-run --limit 10
 
 The 100-question file uses a closed label set: `YES`, `NO`, `PERMITTED`, `FORBIDDEN`, `PLAINTIFF`, `DEFENDANT`, `NO SUCH TEXT`.
 
-1. Exact: the answer is the label, or starts with the label on a word boundary.
-2. Keyword: the label appears later as a whole phrase. `YES` does not match `yesterday`, `NO` does not match `anomaly`, and `NO` does not match `NO SUCH TEXT`.
-3. Judge: disabled unless `--judge` is set on a live run.
+1. Exact: bold, italics, and punctuation are stripped, then the answer matches if it is the label or starts with it (`**FORBIDDEN.**`, `YES.`).
+2. A different opening label is wrong. `**PERMITTED.**` followed later by `FORBIDDEN` does not get credit when the ground truth is `FORBIDDEN`.
+3. Keyword: only when the answer does not open with a canonical label. The label must appear as a whole phrase. `YES` does not match `yesterday`, `NO` does not match `anomaly`, and `NO` does not match `NO SUCH TEXT`.
+4. Judge: disabled unless `--judge` is set on a live run. A leading-label disagreement does not call it.
 
 Provider errors (`ERROR:` / `SKIPPED`, or a failed call) are status `error`. A blank answer is status `empty`. Both are listed in `index.md` and in each model report, and neither is included in the accuracy denominator.
 
-A live 503 or disconnect is retried up to 2 times before it is recorded as `error`.
+A live 503 or disconnect is retried up to 2 times before it is recorded as `error`. HTTP 429 `RESOURCE_EXHAUSTED` is status `error` with a `quota/billing` message and is not retried.
 
 ## Reports
 
