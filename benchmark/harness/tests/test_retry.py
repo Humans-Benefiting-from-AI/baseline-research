@@ -10,7 +10,7 @@ import pytest
 from harness.adapters.base import AdapterError, Completion, MissingAPIKey
 from harness.loader import Question
 from harness.report import ItemResult, ModelReport, write_reports
-from harness.retry import call_with_retry, is_retryable
+from harness.retry import QUOTA_ERROR_MESSAGE, call_with_retry, is_quota_error, is_retryable
 from harness.runner import RunConfig, execute
 from harness.scoring import Score
 
@@ -29,6 +29,10 @@ def test_503_and_disconnect_are_retryable_and_other_errors_are_not():
     assert not is_retryable(_StatusError("bad request", 400))
     assert not is_retryable(AdapterError("sdk missing"))
     assert not is_retryable(MissingAPIKey("OPENAI_API_KEY is not set"))
+    assert not is_retryable(_StatusError("429 RESOURCE_EXHAUSTED", 429))
+    assert is_quota_error(_StatusError("429 RESOURCE_EXHAUSTED", 429))
+    assert is_quota_error(RuntimeError("RESOURCE_EXHAUSTED"))
+    assert not is_quota_error(_StatusError("503 high demand", 503))
 
 
 def test_retry_waits_then_stops_after_two_retries():
@@ -58,6 +62,43 @@ def test_retry_returns_the_successful_attempt():
     assert call_with_retry(fn, sleep=sleeps.append) == "YES"
     assert calls["n"] == 3
     assert sleeps == [1.0, 2.0]
+
+
+def test_429_is_not_retried():
+    calls = {"n": 0}
+
+    def fn():
+        calls["n"] += 1
+        raise _StatusError("429 RESOURCE_EXHAUSTED", 429)
+
+    with pytest.raises(_StatusError):
+        call_with_retry(fn, sleep=lambda _seconds: pytest.fail("slept"))
+    assert calls["n"] == 1
+
+
+def test_429_is_recorded_as_quota_billing_and_excluded(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr(
+        "harness.runner._backoff_sleep", lambda _seconds: pytest.fail("slept")
+    )
+    adapter = _Scripted(
+        [_StatusError("429 RESOURCE_EXHAUSTED. Quota exceeded for this project.", 429)]
+    )
+    monkeypatch.setattr("harness.runner.build_adapter", lambda *_args, **_kwargs: adapter)
+    dataset = tmp_path / "questions.jsonl"
+    _dataset(dataset)
+
+    reports = execute(_config(dataset, tmp_path / "reports"))
+
+    assert adapter.calls == 1
+    report = reports[0]
+    assert report.errors == 1
+    assert report.scored == 0
+    assert report.accuracy is None
+    item = report.items[0]
+    assert item.score.status == "error"
+    assert item.score.detail == QUOTA_ERROR_MESSAGE
+    assert "quota/billing" in item.response
+    assert "not retried" in item.score.detail.lower()
 
 
 def test_non_retryable_error_is_not_repeated():
