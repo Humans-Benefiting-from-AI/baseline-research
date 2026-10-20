@@ -55,18 +55,27 @@ def test_cli_dry_run_limit_writes_three_reports_and_leaves_history(tmp_path: Pat
         markdown = (output_dir / filename.replace(".json", ".md")).read_text(encoding="utf-8")
         assert payload["banner"] == REQUIRED_BANNER
         assert markdown.startswith(REQUIRED_BANNER)
+        assert "- Errors: 0" in markdown
+        assert "- Empty: 0" in markdown
         assert payload["provider"] == provider
         assert payload["dry_run"] is True
         assert payload["judge_enabled"] is False
         assert payload["questions"] == 10
+        assert payload["scored"] == 10
         assert payload["correct"] == 0
+        assert payload["errors"] == 0
+        assert payload["empty"] == 0
+        assert payload["accuracy"] == 0
+        assert all(item["status"] == "scored" for item in payload["items"])
         assert all(item["method"] == "none" for item in payload["items"])
         assert "not contacted" in payload["items"][0]["response"]
 
     index = json.loads((output_dir / "index.json").read_text(encoding="utf-8"))
     assert index["banner"] == REQUIRED_BANNER
     assert len(index["models"]) == 3
-    assert (output_dir / "index.md").read_text(encoding="utf-8").startswith(REQUIRED_BANNER)
+    index_md = (output_dir / "index.md").read_text(encoding="utf-8")
+    assert index_md.startswith(REQUIRED_BANNER)
+    assert "| Errors | Empty |" in index_md
 
 
 def test_cli_refuses_to_overwrite_historical_results(tmp_path: Path):
@@ -85,3 +94,4 @@ def test_default_parser_is_dry_run():
     assert args.dry_run is True
     assert args.limit is None
     assert args.judge is False
+    assert args.max_tokens == 1024

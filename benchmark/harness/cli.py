@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from harness.models import (
+    DEFAULT_MAX_TOKENS,
     PROVIDERS,
     ConfigError,
     parse_providers,
@@ -89,8 +90,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=256,
-        help="Output token cap passed to a live adapter (default: 256).",
+        default=DEFAULT_MAX_TOKENS,
+        help=(
+            "Output token cap passed to a live adapter "
+            f"(default: {DEFAULT_MAX_TOKENS}). Claude thinking tokens count against it."
+        ),
     )
     parser.add_argument(
         "--temperature",
@@ -121,10 +125,11 @@ def main(argv: list[str] | None = None) -> int:
     mode = "dry-run" if args.dry_run else "live"
     print(f"HRE harness finished ({mode}).")
     for report in reports:
+        accuracy = "n/a" if report.accuracy is None else f"{report.accuracy:.1%}"
         print(
             f"  {report.provider} / {report.model}: "
-            f"{report.correct}/{report.total} "
-            f"({report.accuracy:.1%})"
+            f"{report.correct}/{report.scored} scored ({accuracy}), "
+            f"errors {report.errors}, empty {report.empty}"
         )
     print(f"Reports: {config.output_dir}")
     if args.dry_run:

@@ -72,6 +72,16 @@ def test_error_marker_scores_zero_without_the_judge():
     scored = score_response(_question("YES"), "ERROR: model not found", judge=judge)
     assert scored.correct == 0
     assert scored.method == "error"
+    assert scored.status == "error"
+    assert judge.calls == 0
+
+
+def test_empty_answer_is_its_own_status_and_skips_the_judge():
+    judge = SpyJudge()
+    scored = score_response(_question("YES"), "   ", judge=judge)
+    assert scored.status == "empty"
+    assert scored.method == "empty"
+    assert scored.correct == 0
     assert judge.calls == 0
 
 

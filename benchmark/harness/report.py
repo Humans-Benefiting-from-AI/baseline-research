@@ -26,12 +26,14 @@ class ItemResult:
     score: Score
 
     def to_dict(self) -> dict:
+        scored = self.score.status == "scored"
         return {
             "id": self.question.id,
             "archetype": self.question.archetype,
             "ground_truth": self.question.ground_truth,
             "response": self.response,
-            "score": self.score.correct,
+            "status": self.score.status,
+            "score": self.score.correct if scored else None,
             "method": self.score.method,
             "detail": self.score.detail,
         }
@@ -47,31 +49,58 @@ class ModelReport:
     items: list[ItemResult]
 
     @property
-    def correct(self) -> int:
-        return sum(item.score.correct for item in self.items)
-
-    @property
     def total(self) -> int:
         return len(self.items)
 
     @property
-    def accuracy(self) -> float:
-        if not self.items:
-            return 0.0
-        return self.correct / self.total
+    def scored(self) -> int:
+        return sum(1 for item in self.items if item.score.status == "scored")
+
+    @property
+    def errors(self) -> int:
+        return sum(1 for item in self.items if item.score.status == "error")
+
+    @property
+    def empty(self) -> int:
+        return sum(1 for item in self.items if item.score.status == "empty")
+
+    @property
+    def correct(self) -> int:
+        return sum(
+            item.score.correct for item in self.items if item.score.status == "scored"
+        )
+
+    @property
+    def accuracy(self) -> float | None:
+        """Correct divided by scored answers. Errors and empty answers are excluded."""
+        if self.scored == 0:
+            return None
+        return self.correct / self.scored
 
     def by_archetype(self) -> dict[str, dict]:
         buckets: dict[str, dict] = {}
         for item in self.items:
             bucket = buckets.setdefault(
-                item.question.archetype, {"correct": 0, "total": 0, "failures": 0}
+                item.question.archetype,
+                {
+                    "correct": 0,
+                    "scored": 0,
+                    "total": 0,
+                    "errors": 0,
+                    "empty": 0,
+                },
             )
             bucket["total"] += 1
-            bucket["correct"] += item.score.correct
-            bucket["failures"] += 1 - item.score.correct
+            if item.score.status == "error":
+                bucket["errors"] += 1
+            elif item.score.status == "empty":
+                bucket["empty"] += 1
+            else:
+                bucket["scored"] += 1
+                bucket["correct"] += item.score.correct
         for bucket in buckets.values():
-            total = bucket["total"]
-            bucket["accuracy"] = (bucket["correct"] / total) if total else 0.0
+            scored = bucket["scored"]
+            bucket["accuracy"] = (bucket["correct"] / scored) if scored else None
         return buckets
 
     def to_dict(self) -> dict:
@@ -83,7 +112,10 @@ class ModelReport:
             "judge_enabled": self.judge_enabled,
             "dataset": self.dataset,
             "questions": self.total,
+            "scored": self.scored,
             "correct": self.correct,
+            "errors": self.errors,
+            "empty": self.empty,
             "accuracy": self.accuracy,
             "rubric": (
                 "exact leading label, then whole-phrase keyword match; "
@@ -130,7 +162,10 @@ def write_reports(reports: list[ModelReport], output_dir: Path) -> list[Path]:
                 "model": report.model,
                 "dry_run": report.dry_run,
                 "questions": report.total,
+                "scored": report.scored,
                 "correct": report.correct,
+                "errors": report.errors,
+                "empty": report.empty,
                 "accuracy": report.accuracy,
                 "markdown": md_path.name,
                 "json": json_path.name,
@@ -152,13 +187,14 @@ def write_reports(reports: list[ModelReport], output_dir: Path) -> list[Path]:
         "",
         "# HRE run index",
         "",
-        "| Provider | Model | Questions | Correct | Accuracy | Dry run |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| Provider | Model | Questions | Scored | Correct | Errors | Empty | Accuracy | Dry run |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in index_models:
         lines.append(
             f"| {row['provider']} | {row['model']} | {row['questions']} | "
-            f"{row['correct']} | {row['accuracy']:.1%} | {row['dry_run']} |"
+            f"{row['scored']} | {row['correct']} | {row['errors']} | {row['empty']} | "
+            f"{_format_accuracy(row['accuracy'])} | {row['dry_run']} |"
         )
     lines.append("")
     index_md.write_text("\n".join(lines), encoding="utf-8")
@@ -177,8 +213,12 @@ def _markdown(report: ModelReport) -> str:
         f"- Mode: {mode}",
         f"- Dataset: {report.dataset}",
         f"- Questions: {report.total}",
+        f"- Scored: {report.scored}",
         f"- Correct: {report.correct}",
-        f"- Accuracy: {report.accuracy:.1%}",
+        f"- Errors: {report.errors}",
+        f"- Empty: {report.empty}",
+        f"- Accuracy: {_format_accuracy(report.accuracy)} "
+        f"({report.correct}/{report.scored} scored; errors and empty answers are excluded)",
         f"- LLM-as-judge: {judge}",
         "- Rubric: exact match on the leading ground-truth label, then a "
         "whole-phrase keyword match. The judge hook runs only when enabled "
@@ -186,13 +226,14 @@ def _markdown(report: ModelReport) -> str:
         "",
         "## Accuracy by archetype",
         "",
-        "| Archetype | Correct | Total | Failures | Accuracy |",
-        "| --- | --- | --- | --- | --- |",
+        "| Archetype | Correct | Scored | Errors | Empty | Total | Accuracy |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
     ]
     for archetype, stats in sorted(report.by_archetype().items()):
         lines.append(
-            f"| {archetype} | {stats['correct']} | {stats['total']} | "
-            f"{stats['failures']} | {stats['accuracy']:.1%} |"
+            f"| {archetype} | {stats['correct']} | {stats['scored']} | "
+            f"{stats['errors']} | {stats['empty']} | {stats['total']} | "
+            f"{_format_accuracy(stats['accuracy'])} |"
         )
 
     lines.extend(
@@ -200,17 +241,25 @@ def _markdown(report: ModelReport) -> str:
             "",
             "## Items",
             "",
-            "| id | archetype | ground truth | score | method |",
-            "| --- | --- | --- | --- | --- |",
+            "| id | archetype | ground truth | status | score | method |",
+            "| --- | --- | --- | --- | --- | --- |",
         ]
     )
     for item in report.items:
+        score_cell = "—" if item.score.status != "scored" else str(item.score.correct)
         lines.append(
             f"| {item.question.id} | {item.question.archetype} | "
-            f"{item.question.ground_truth} | {item.score.correct} | {item.score.method} |"
+            f"{item.question.ground_truth} | {item.score.status} | "
+            f"{score_cell} | {item.score.method} |"
         )
     lines.append("")
     return "\n".join(lines)
+
+
+def _format_accuracy(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value:.1%}"
 
 
 def _stem(provider: str, model: str) -> str:

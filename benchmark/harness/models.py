@@ -33,6 +33,10 @@ DEFAULT_MODEL_IDS = {
     "google": "gemini-3.8-flash",
 }
 
+# Claude counts adaptive thinking tokens against this cap. 256 left the
+# text block empty on the 10-question live run, so the default is 1024.
+DEFAULT_MAX_TOKENS = 1024
+
 
 class ConfigError(ValueError):
     """A CLI or environment setting cannot be used."""

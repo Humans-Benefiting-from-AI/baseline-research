@@ -10,10 +10,11 @@ from pathlib import Path
 from harness.adapters import build_adapter
 from harness.adapters.base import MissingAPIKey
 from harness.loader import Question, load_questions
-from harness.models import API_KEY_ENV
+from harness.models import API_KEY_ENV, DEFAULT_MAX_TOKENS
 from harness.prompts import SYSTEM_PROMPT, build_user_prompt
 from harness.report import ItemResult, ModelReport, UnsafeOutputError, assert_safe_output, write_reports
-from harness.scoring import LLMJudge, score_response
+from harness.retry import call_with_retry
+from harness.scoring import LLMJudge, Score, score_response
 
 
 @dataclass(frozen=True)
@@ -25,7 +26,7 @@ class RunConfig:
     limit: int | None = None
     dry_run: bool = True
     judge_enabled: bool = False
-    max_tokens: int | None = 256
+    max_tokens: int | None = DEFAULT_MAX_TOKENS
     temperature: float | None = None
     sleep_seconds: float = 1.0
 
@@ -61,7 +62,7 @@ def execute(config: RunConfig) -> list[ModelReport]:
         items: list[ItemResult] = []
         for index, question in enumerate(questions):
             completion = _complete(adapter, question)
-            score = score_response(question, completion.text, judge=judge)
+            score = _score_completion(question, completion, judge)
             items.append(
                 ItemResult(question=question, response=completion.text, score=score)
             )
@@ -82,20 +83,42 @@ def execute(config: RunConfig) -> list[ModelReport]:
     return reports
 
 
+def _backoff_sleep(seconds: float) -> None:
+    time.sleep(seconds)
+
+
 def _complete(adapter, question: Question):
+    from harness.adapters.base import Completion
+
     try:
-        return adapter.complete(system=SYSTEM_PROMPT, user=build_user_prompt(question))
+        return call_with_retry(
+            lambda: adapter.complete(
+                system=SYSTEM_PROMPT, user=build_user_prompt(question)
+            ),
+            sleep=_backoff_sleep,
+        )
     except MissingAPIKey:
         raise
     except Exception as exc:
-        from harness.adapters.base import Completion
-
+        message = _redact(str(exc))
         return Completion(
-            text=f"ERROR: {_redact(str(exc))}",
+            text=f"ERROR: {message}",
             model=getattr(adapter, "model", ""),
             provider=getattr(adapter, "provider", ""),
             mock=False,
+            status="error",
+            detail=message[:500],
         )
+
+
+def _score_completion(question: Question, completion, judge: LLMJudge) -> Score:
+    if completion.status == "error":
+        detail = completion.detail or completion.text.strip()[:500]
+        return Score(0, "error", detail or "Provider returned an error.", status="error")
+    score = score_response(question, completion.text, judge=judge)
+    if score.status == "empty" and completion.detail:
+        return Score(0, "empty", completion.detail, status="empty")
+    return score
 
 
 def _redact(text: str) -> str:

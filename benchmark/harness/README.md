@@ -37,7 +37,9 @@ Defaults:
 - Providers: OpenAI, Anthropic, and Google
 - Model ids: `gpt-5.6-sol`, `claude-sonnet-5-5`, `gemini-3.8-flash` (override; these are not the `gpt-4o` / Claude 3.5 snapshots from the first results file)
 - Output: `benchmark/reports/` (gitignored)
-- Scoring: exact leading label, then whole-phrase keyword match
+- Scoring: exact leading label, then whole-phrase keyword match. Provider errors and empty answers are status `error` or `empty` and are left out of accuracy.
+- Output token cap: 1024 (`--max-tokens` to override). Claude thinking tokens count against this cap.
+- Retries: a live call that fails with HTTP 503 or a disconnect is tried up to 2 more times, waiting 1s and then 2s.
 - LLM-as-judge: off
 
 `--limit N` validates the file, then scores the first N questions. Use it for a smoke run.
@@ -81,7 +83,9 @@ The 100-question file uses a closed label set: `YES`, `NO`, `PERMITTED`, `FORBID
 2. Keyword: the label appears later as a whole phrase. `YES` does not match `yesterday`, `NO` does not match `anomaly`, and `NO` does not match `NO SUCH TEXT`.
 3. Judge: disabled unless `--judge` is set on a live run.
 
-Responses that start with `ERROR:` or `SKIPPED` score 0.
+Provider errors (`ERROR:` / `SKIPPED`, or a failed call) are status `error`. A blank answer is status `empty`. Both are listed in `index.md` and in each model report, and neither is included in the accuracy denominator.
+
+A live 503 or disconnect is retried up to 2 times before it is recorded as `error`.
 
 ## Reports
 

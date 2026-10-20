@@ -10,7 +10,13 @@ from harness.adapters import (
     build_adapter,
 )
 from harness.adapters.base import MissingAPIKey
-from harness.models import DEFAULT_MODEL_IDS, ConfigError, parse_providers, resolve_model_id
+from harness.models import (
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_MODEL_IDS,
+    ConfigError,
+    parse_providers,
+    resolve_model_id,
+)
 
 
 def test_dry_run_factory_returns_a_mock_for_each_provider():
@@ -53,6 +59,13 @@ def test_model_id_resolution_prefers_cli_then_env_then_default(monkeypatch):
     assert resolve_model_id("openai", None) == DEFAULT_MODEL_IDS["openai"]
     assert resolve_model_id("anthropic", None) == DEFAULT_MODEL_IDS["anthropic"]
     assert resolve_model_id("google", None) == DEFAULT_MODEL_IDS["google"]
+
+
+def test_default_output_cap_is_1024():
+    assert DEFAULT_MAX_TOKENS == 1024
+    assert OpenAIAdapter(model="gpt-custom").max_tokens == 1024
+    assert AnthropicAdapter(model="claude-custom").max_tokens == 1024
+    assert GoogleAdapter(model="gemini-custom").max_tokens == 1024
 
 
 def test_defaults_are_not_the_historical_snapshots():

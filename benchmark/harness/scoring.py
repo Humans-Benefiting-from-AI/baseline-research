@@ -15,8 +15,9 @@ The original ``run_evals.py`` loop used a raw substring check
 (``ground_truth.lower() in response``). Whole-phrase matching replaces
 that check so the closed label set in the 100-question file
 (YES, NO, PERMITTED, FORBIDDEN, PLAINTIFF, DEFENDANT, NO SUCH TEXT)
-is not credited accidentally. Answers that start with ``ERROR:`` or
-``SKIPPED`` score 0 and do not fall through to the judge.
+is not credited accidentally. Provider errors and empty answers are
+status ``error`` and ``empty``. They are not misses, the judge is not
+called, and the report leaves them out of the accuracy denominator.
 """
 
 from __future__ import annotations
@@ -46,14 +47,24 @@ class JudgeDisabled(RuntimeError):
 
 @dataclass(frozen=True)
 class Score:
+    """One rubric outcome.
+
+    ``status`` is ``scored`` for an answer the rubric judged, ``error`` for
+    a provider failure, and ``empty`` for a blank answer. Only ``scored``
+    rows belong in the accuracy denominator. ``correct`` is 1 or 0; it is
+    meaningful for ``scored`` rows.
+    """
+
     correct: int
     method: str
     detail: str
+    status: str = "scored"
 
     def to_dict(self) -> dict:
         return {
-            "correct": self.correct,
+            "correct": self.correct if self.status == "scored" else None,
             "method": self.method,
+            "status": self.status,
             "detail": self.detail,
         }
 
@@ -100,7 +111,20 @@ def score_response(
 ) -> Score:
     """Apply the rubric. A disabled or missing judge is not invoked."""
     if _is_transport_failure(response):
-        return Score(0, "error", "Provider returned an error or a skip marker.")
+        return Score(
+            0,
+            "error",
+            response.strip()[:500],
+            status="error",
+        )
+
+    if not response or not response.strip():
+        return Score(
+            0,
+            "empty",
+            "Provider returned an empty answer.",
+            status="empty",
+        )
 
     if exact_match(question.ground_truth, response):
         return Score(1, "exact", "Leading conclusion matches the ground truth.")

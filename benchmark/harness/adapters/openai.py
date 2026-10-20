@@ -10,7 +10,7 @@ from __future__ import annotations
 import os
 
 from harness.adapters.base import AdapterError, Completion, MissingAPIKey, ModelAdapter
-from harness.models import API_KEY_ENV
+from harness.models import API_KEY_ENV, DEFAULT_MAX_TOKENS
 
 _PROVIDER = "openai"
 _KEY_ENV = API_KEY_ENV[_PROVIDER]
@@ -21,14 +21,14 @@ class OpenAIAdapter(ModelAdapter):
         self,
         *,
         model: str,
-        max_tokens: int | None = 256,
+        max_tokens: int | None = None,
         temperature: float | None = None,
     ) -> None:
         if not model or not model.strip():
             raise ValueError("OpenAI model id is required.")
         self.provider = _PROVIDER
         self.model = model.strip()
-        self.max_tokens = max_tokens
+        self.max_tokens = DEFAULT_MAX_TOKENS if max_tokens is None else max_tokens
         self.temperature = temperature
 
     def require_key(self) -> None:

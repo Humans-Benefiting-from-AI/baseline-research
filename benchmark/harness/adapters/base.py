@@ -15,12 +15,20 @@ class AdapterError(RuntimeError):
 
 @dataclass(frozen=True)
 class Completion:
-    """Text returned for one question. ``mock`` is True for the dry-run adapter."""
+    """Text returned for one question.
+
+    ``mock`` is True for the dry-run adapter. ``status`` is ``ok`` or
+    ``error``. An ok completion with blank ``text`` is an empty answer.
+    ``detail`` carries a short note, such as a max-token stop with no
+    text block after a thinking block.
+    """
 
     text: str
     model: str
     provider: str
     mock: bool = False
+    status: str = "ok"
+    detail: str = ""
 
 
 class ModelAdapter:
