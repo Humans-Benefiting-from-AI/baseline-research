@@ -2,9 +2,10 @@
 
 Rubric, applied in order. The first hit wins.
 
-1. Exact. Markdown emphasis and punctuation are stripped, then the answer
-   matches if it is the ground-truth label or begins with it
-   (``**FORBIDDEN.**``, ``YES. ...``).
+1. Exact. Markdown emphasis is removed, then the answer matches if it is
+   the ground-truth label or begins with it (``**FORBIDDEN.**``,
+   ``YES. ...``). Punctuation inside the answer stays a boundary, so words
+   on either side of it are not joined into a longer label.
 2. Leading disagreement. If that opening label is a different canonical
    label, the answer is wrong. A later mention of the expected label is
    not a keyword hit. ``**PERMITTED.** ... FORBIDDEN`` is wrong when the
@@ -190,14 +191,16 @@ def _leading_label(prepared: str) -> str | None:
 
 
 def _prepare(text: str) -> str:
-    """Drop markdown emphasis and punctuation, then collapse whitespace.
+    """Drop markdown emphasis, then collapse whitespace.
 
-    ``**PERMITTED.**`` becomes ``permitted`` so the leading-label check
-    sees the conclusion the model actually opened with.
+    A leading run of punctuation is removed so ``**PERMITTED.**`` and
+    ``"YES"`` still open on the label. Punctuation inside the answer is
+    kept: replacing it with a space would fuse ``No. Such text`` into the
+    canonical phrase ``no such text``.
     """
     without_emphasis = re.sub(r"[*_`]+", "", text)
-    without_punctuation = re.sub(r"[^\w\s]+", " ", without_emphasis, flags=re.UNICODE)
-    return re.sub(r"\s+", " ", without_punctuation.strip()).casefold()
+    collapsed = re.sub(r"\s+", " ", without_emphasis.strip()).casefold()
+    return re.sub(r"^[^\w]+", "", collapsed)
 
 
 def _is_standalone(label: str, text: str, start: int) -> bool:

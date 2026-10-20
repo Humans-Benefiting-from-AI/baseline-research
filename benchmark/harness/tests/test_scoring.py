@@ -80,6 +80,24 @@ def test_shorter_label_does_not_eat_a_longer_one():
     assert score_response(_question("NO SUCH TEXT"), "NO SUCH TEXT").method == "exact"
 
 
+def test_sentence_punctuation_does_not_forge_a_longer_label():
+    hallucinated = "No. Such text is found in later midrash."
+    forged = score_response(_question("NO SUCH TEXT"), hallucinated)
+    assert forged.correct == 0
+    assert forged.method == "mismatch"
+
+    leading_no = score_response(_question("NO"), hallucinated)
+    assert leading_no.correct == 1
+    assert leading_no.method == "exact"
+
+    later = score_response(
+        _question("NO SUCH TEXT"),
+        "The sugya is unrelated. No. Such text shows up only in a later midrash.",
+    )
+    assert later.correct == 0
+    assert later.method == "none"
+
+
 def test_multiword_label_matches_as_a_phrase():
     scored = score_response(_question("NO SUCH TEXT"), "NO SUCH TEXT")
     assert scored.method == "exact"
