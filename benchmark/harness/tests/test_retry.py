@@ -132,25 +132,29 @@ class _Scripted:
         return outcome
 
 
-def _dataset(path: Path) -> None:
-    row = {
-        "id": "hre-test-001",
-        "archetype": "Temporal Source-Gating",
-        "prompt": "A prompt.",
-        "eval_task": "Answer YES or NO.",
-        "ground_truth": "YES",
-        "logic_explanation": "Dates do not line up.",
-    }
-    path.write_text(json.dumps(row) + "\n", encoding="utf-8")
+def _dataset(path: Path, count: int = 1) -> None:
+    rows = []
+    for index in range(count):
+        row = {
+            "id": f"hre-test-{index + 1:03d}",
+            "archetype": "Temporal Source-Gating",
+            "prompt": "A prompt.",
+            "eval_task": "Answer YES or NO.",
+            "ground_truth": "YES",
+            "logic_explanation": "Dates do not line up.",
+        }
+        rows.append(json.dumps(row))
+    path.write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
-def _config(dataset: Path, output_dir: Path) -> RunConfig:
+def _config(dataset: Path, output_dir: Path, *, judge_enabled: bool = False) -> RunConfig:
     return RunConfig(
         dataset=dataset,
         output_dir=output_dir,
         providers=["google"],
         model_ids={"google": "gemini-test"},
         dry_run=False,
+        judge_enabled=judge_enabled,
         sleep_seconds=0,
     )
 
@@ -196,6 +200,63 @@ def test_exhausted_503s_are_an_error_and_excluded_from_accuracy(tmp_path: Path, 
     assert report.accuracy is None
     assert report.items[0].score.status == "error"
     assert "503" in report.items[0].response
+
+
+def test_judge_retries_a_disconnect_then_scores(tmp_path: Path, monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr("harness.runner._backoff_sleep", sleeps.append)
+    adapter = _Scripted(
+        [
+            Completion(text="The meat is fine.", model="gemini-test", provider="google"),
+            ConnectionError("server disconnected"),
+            Completion(text="CORRECT", model="gemini-test", provider="google"),
+        ]
+    )
+    monkeypatch.setattr("harness.runner.build_adapter", lambda *_args, **_kwargs: adapter)
+    dataset = tmp_path / "questions.jsonl"
+    _dataset(dataset)
+    output_dir = tmp_path / "reports"
+
+    reports = execute(_config(dataset, output_dir, judge_enabled=True))
+
+    assert adapter.calls == 3
+    assert sleeps == [1.0]
+    assert reports[0].items[0].score.method == "judge"
+    assert reports[0].correct == 1
+    assert reports[0].scored == 1
+    assert reports[0].errors == 0
+    assert (output_dir / "google__gemini-test.json").is_file()
+
+
+def test_judge_503_is_an_error_and_the_run_still_writes_reports(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harness.runner._backoff_sleep", lambda _seconds: None)
+    adapter = _Scripted(
+        [
+            Completion(text="YES", model="gemini-test", provider="google"),
+            Completion(text="The meat is fine.", model="gemini-test", provider="google"),
+            _StatusError("503 high demand", 503),
+            _StatusError("503 high demand", 503),
+            _StatusError("503 high demand", 503),
+        ]
+    )
+    monkeypatch.setattr("harness.runner.build_adapter", lambda *_args, **_kwargs: adapter)
+    dataset = tmp_path / "questions.jsonl"
+    _dataset(dataset, count=2)
+    output_dir = tmp_path / "reports"
+
+    reports = execute(_config(dataset, output_dir, judge_enabled=True))
+
+    assert adapter.calls == 5
+    report = reports[0]
+    assert report.items[0].score.method == "exact"
+    assert report.items[0].score.correct == 1
+    assert report.items[1].score.status == "error"
+    assert report.items[1].score.method == "error"
+    assert "503" in report.items[1].score.detail
+    assert report.scored == 1
+    assert report.errors == 1
+    assert report.accuracy == 1
+    assert (output_dir / "google__gemini-test.json").is_file()
 
 
 def test_report_excludes_error_and_empty_from_accuracy(tmp_path: Path):

@@ -14,7 +14,8 @@ Rubric, applied in order. The first hit wins.
    ``YES`` does not match inside ``yesterday``.
 4. LLM-as-judge. Only when a judge is passed and ``enabled`` is true,
    and only after the checks above miss. A leading disagreement does
-   not call the judge. The default run does not enable one.
+   not call the judge. The default run does not enable one. A judge
+   call that fails after retries is status ``error``, not a miss.
 
 The original ``run_evals.py`` loop used a raw substring check
 (``ground_truth.lower() in response``). Whole-phrase matching replaces
@@ -80,12 +81,15 @@ class LLMJudge:
     ``enabled`` defaults to False. ``score_response`` does not call
     ``judge`` unless the automatic rubric missed and the hook is enabled.
     Enabling it on a live run sends one extra completion per miss through
-    the same adapter. Dry-run leaves the hook disabled.
+    the same adapter. The runner passes a completion callable with the
+    same retry path as an answer. A leftover failure is an error score,
+    so the run still writes reports. Dry-run leaves the hook disabled.
     """
 
-    def __init__(self, adapter, *, enabled: bool = False) -> None:
+    def __init__(self, adapter, *, enabled: bool = False, complete=None) -> None:
         self.adapter = adapter
         self.enabled = enabled
+        self._complete = complete
 
     def judge(self, question: Question, response: str) -> Score:
         if not self.enabled:
@@ -98,10 +102,19 @@ class LLMJudge:
             f"Ground truth: {question.ground_truth}\n"
             f"Candidate answer:\n{response}"
         )
-        completion = self.adapter.complete(
+        complete = self._complete if self._complete is not None else self.adapter.complete
+        completion = complete(
             system="You score Halachic eval answers. Reply CORRECT or INCORRECT only.",
             user=user,
         )
+        if completion.status == "error":
+            detail = completion.detail or completion.text.strip()[:500]
+            return Score(
+                0,
+                "error",
+                detail or "Provider returned an error.",
+                status="error",
+            )
         verdict = completion.text.strip().splitlines()[0].strip().upper() if completion.text.strip() else ""
         if verdict.startswith("CORRECT"):
             return Score(1, "judge", "LLM-as-judge returned CORRECT.")

@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 
 from harness.adapters import build_adapter
@@ -56,9 +57,14 @@ def execute(config: RunConfig) -> list[ModelReport]:
     judge_enabled = config.judge_enabled and not config.dry_run
     reports: list[ModelReport] = []
     for adapter in adapters:
-        # The judge, when enabled, reuses the adapter under test. It stays
-        # disabled in dry-run so the mock is not asked to grade itself.
-        judge = LLMJudge(adapter, enabled=judge_enabled)
+        # The judge, when enabled, reuses the adapter under test through
+        # the same retry path as the answer. It stays disabled in dry-run
+        # so the mock is not asked to grade itself.
+        judge = LLMJudge(
+            adapter,
+            enabled=judge_enabled,
+            complete=partial(_guarded_complete, adapter),
+        )
         items: list[ItemResult] = []
         for index, question in enumerate(questions):
             completion = _complete(adapter, question)
@@ -88,13 +94,20 @@ def _backoff_sleep(seconds: float) -> None:
 
 
 def _complete(adapter, question: Question):
+    return _guarded_complete(
+        adapter,
+        system=SYSTEM_PROMPT,
+        user=build_user_prompt(question),
+    )
+
+
+def _guarded_complete(adapter, *, system: str, user: str):
+    """Retry 503s and disconnects. Record anything left as an error completion."""
     from harness.adapters.base import Completion
 
     try:
         return call_with_retry(
-            lambda: adapter.complete(
-                system=SYSTEM_PROMPT, user=build_user_prompt(question)
-            ),
+            lambda: adapter.complete(system=system, user=user),
             sleep=_backoff_sleep,
         )
     except MissingAPIKey:
