@@ -1,0 +1,3 @@
+# Test dependencies for the HRE harness. Provider SDKs are not required
+# for dry-run tests; they live in requirements.txt for a later live run.
+pytest>=8
